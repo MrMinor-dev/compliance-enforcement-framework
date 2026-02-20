@@ -14,7 +14,18 @@ There are four distinct compliance domains in this system. They have different s
 
 TGT sells on Amazon. Amazon's content policies and FTC advertising guidelines are external rules I don't control and can't negotiate. A single non-compliant listing can trigger account suspension.
 
-Built prohibited keyword enforcement with four severity tiers: blocked outright, flagged for human review, warned, monitored. A workflow audits every product before publish. Nothing reaches Amazon that hasn't passed the check. The AI doesn't interpret what's compliant — it applies rules that were defined in advance. Interpretation is where violations happen.
+Built prohibited keyword enforcement with four severity tiers: blocked outright, flagged for human review, warned, monitored. Every keyword has a category, a severity, and a reference to the Amazon ToS clause that governs it:
+
+```sql
+-- tgt_prohibited_keywords: what gets blocked and why
+keyword   | category    | severity        | amazon_tos_reference
+----------|-------------|-----------------|---------------------
+"gun"     | Firearms    | block           | Associates Policy §4.2
+"rifle"   | Firearms    | block           | Associates Policy §4.2
+"CBD"     | Supplements | flag_for_review | Health Claims §7.1
+```
+
+A daily Spot Audit workflow (v3.1, active) validates that the prevention system is working — not by scanning content, but by verifying the enforcement layer fired correctly. 10 executions, 100% pass rate. Nothing reaches Amazon that hasn't passed the check. The AI doesn't interpret what's compliant — it applies rules that were defined in advance. Interpretation is where violations happen.
 
 **Operational compliance — internal rules, verified behavior**
 
